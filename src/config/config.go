@@ -14,8 +14,12 @@ var (
 	cfg config
 )
 
+
+
+
 type config struct {
 	LogLevel string `json:"log_level"`
+	Cache string `json:"cache"`
 	Redis redisConfig `json:"redis"`
 	Postgres pgConfig `json:"postgres"`
 	Secrets secrets

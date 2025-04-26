@@ -19,11 +19,6 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.validator.Struct(i)
 }
 
-func init(){
-	cfg.Red()
-
-}
-
 func main() {
 	config := cfg.Cfg()
 	e := echo.New()

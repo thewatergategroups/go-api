@@ -9,7 +9,7 @@ import (
 )
 
 var pgOnce sync.Once
-var DB *pgxpool.Pool
+var db *pgxpool.Pool
 
 func Pg() *pgxpool.Pool {
 	pgOnce.Do(func(){
@@ -22,11 +22,10 @@ func Pg() *pgxpool.Pool {
 			Cfg().Postgres.Schema,
 		)
 		var err error
-		DB, err = pgxpool.New(context.Background(), url)
+		db, err = pgxpool.New(context.Background(), url)
 		if err != nil {
 			panic(fmt.Sprintf("Unable to connect to database: %v", err))
 		}
 	})
-	return DB
+	return db
 }
-

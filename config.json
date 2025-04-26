@@ -1,7 +1,7 @@
 {
     "log_level": "info",
+    "cache": "redis",
     "redis": {
-        "enabled": true,
         "address": "localhost:6379",
         "db": 1
     },
