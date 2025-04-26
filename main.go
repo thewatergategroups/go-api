@@ -24,12 +24,12 @@ func init(){
 }
 
 func main() {
-	config:= cfg.Cfg()
-	e:= echo.New()
+	config := cfg.Cfg()
+	e := echo.New()
 	
 	logLevel := cfg.GetLogLevel(config.LogLevel)
-	e.Logger.SetLevel(logLevel)
 
+	e.Logger.SetLevel(logLevel)
 	e.Use(middleware.RequestID())  // 📌 Add unique ID to all logs/errors early
 	e.Use(middleware.Logger())     // 📝 Log every request (with RequestID)
 	e.Use(middleware.Recover())    // 🛑 Catch panics before they crash the server
@@ -42,6 +42,7 @@ func main() {
 	e.Validator = &CustomValidator{validator: validator.New()}
 
 	endpoints.RegisterGreetingsRoutes(e)
+	
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
 }

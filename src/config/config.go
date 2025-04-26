@@ -1,6 +1,8 @@
 package cfg
 
 import (
+	"encoding/json"
+	"os"
 	"sync"
 
 	"github.com/caarlos0/env/v11"
@@ -12,11 +14,22 @@ var (
 	cfg config
 )
 
-
 type config struct {
-	LogLevel string `env:"LOG_LEVEL" envDefaut:"info"`
+	LogLevel string `json:"log_level"`
+	Redis redis `json:"redis"`
+	Secrets secrets
 }
-  
+
+type redis struct {
+	Enabled bool `json:"enabled"`
+	Address string `json:"address"` // host and port
+	Db int `json:"db"`
+}
+
+type secrets struct {
+	RedisPassword string `env:"REDIS_PASSWORD"`
+}
+
 func GetLogLevel(logLevel string) log.Lvl{
 	level := log.INFO
 	switch logLevel {
@@ -32,9 +45,18 @@ func GetLogLevel(logLevel string) log.Lvl{
 
 func Cfg() config{
 	once.Do(func(){
-		err := env.Parse(&cfg)
-		if err !=nil{
-			panic("config not set correctly")
+		
+		configFile, err := os.Open("config.json")
+		if err != nil {
+			panic(err.Error())
+		}
+		defer configFile.Close()
+		if err:= json.NewDecoder(configFile).Decode(&cfg);err != nil {
+			panic(err.Error())
+		}
+		
+		if err := env.Parse(&cfg.Secrets); err !=nil{
+			panic(err.Error())
 		}
 
 	})

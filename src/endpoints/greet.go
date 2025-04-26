@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	cfg "go-api/src/config"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -33,14 +32,12 @@ type GreetQuery struct {
 
 func getGreetHandler(c echo.Context) error {
 	var params GreetQuery
-	
 	if err:= c.Bind(&params);err !=nil{
 		return echo.NewHTTPError(http.StatusBadRequest,err.Error())
 	}
 	if err:= c.Validate((&params)); err !=nil{
 		return echo.NewHTTPError(http.StatusUnprocessableEntity,err.Error())
 	}
-	c.Logger().Info("log level" + cfg.Cfg().LogLevel)
 	response := HelloResponse{Message: "Hello "+ params.Title+ " " + params.Name + "!"}
 	return c.JSON(http.StatusOK,response)
 }
