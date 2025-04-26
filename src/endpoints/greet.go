@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"context"
+	cfg "go-api/src/config"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -38,7 +40,17 @@ func getGreetHandler(c echo.Context) error {
 	if err:= c.Validate((&params)); err !=nil{
 		return echo.NewHTTPError(http.StatusUnprocessableEntity,err.Error())
 	}
-	response := HelloResponse{Message: "Hello "+ params.Title+ " " + params.Name + "!"}
+	
+	_,err:= cfg.Red().Set(context.Background(),"greet", "Hello "+ params.Title+ " " + params.Name + "!",0).Result()
+	if err != nil{
+		return echo.NewHTTPError(http.StatusInternalServerError)	
+	}
+
+	greeting, err := cfg.Red().Get(context.Background(),"greet").Result()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+	response := HelloResponse{Message:greeting}
 	return c.JSON(http.StatusOK,response)
 }
 

@@ -16,11 +16,11 @@ var (
 
 type config struct {
 	LogLevel string `json:"log_level"`
-	Redis redis `json:"redis"`
+	Redis redisConfig `json:"redis"`
 	Secrets secrets
 }
 
-type redis struct {
+type redisConfig struct {
 	Enabled bool `json:"enabled"`
 	Address string `json:"address"` // host and port
 	Db int `json:"db"`

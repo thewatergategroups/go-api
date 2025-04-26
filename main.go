@@ -20,6 +20,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 func init(){
+	cfg.Red()
 
 }
 
