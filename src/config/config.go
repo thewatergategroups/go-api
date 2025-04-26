@@ -17,17 +17,25 @@ var (
 type config struct {
 	LogLevel string `json:"log_level"`
 	Redis redisConfig `json:"redis"`
+	Postgres pgConfig `json:"postgres"`
 	Secrets secrets
 }
 
 type redisConfig struct {
-	Enabled bool `json:"enabled"`
-	Address string `json:"address"` // host and port
+	Address string `json:"address"` // host and port ( localhost:6379 )
 	Db int `json:"db"`
+}
+
+type pgConfig struct {
+	Username string `json:"username"` 
+	Address string `json:"address"`  // host and port ( localhost:6379 )
+	DbName string `json:"db_name"`
+	Schema string `json:"schema"`
 }
 
 type secrets struct {
 	RedisPassword string `env:"REDIS_PASSWORD"`
+	PostgresPassword string `env:"PG_PASSWORD"`
 }
 
 func GetLogLevel(logLevel string) log.Lvl{

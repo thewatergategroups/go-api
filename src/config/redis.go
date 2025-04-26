@@ -13,9 +13,6 @@ var client *redis.Client
 
 func Red() *redis.Client{
 	redOnce.Do(func(){
-		if !Cfg().Redis.Enabled {
-			return
-		}
 		client = redis.NewClient(&redis.Options{
 			Addr: Cfg().Redis.Address,
 			DB: Cfg().Redis.Db,
