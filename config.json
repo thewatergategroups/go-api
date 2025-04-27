@@ -5,11 +5,14 @@
         "address": "localhost:6379",
         "db": 1
     },
-    "postgres": {
+    "db": {
+        "driver": "pgx",
         "username": "postgres",
         "address": "localhost:5432",
         "db_name": "app",
-        "ssl_mode": false,
-        "schema": "app"
+        "schema": "app",
+        "max_open_conns": 10,
+        "max_idle_conns": 10,
+        "max_conn_lifetime_mins": 5
     }
 }

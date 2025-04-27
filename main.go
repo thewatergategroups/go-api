@@ -3,11 +3,16 @@ package main
 import (
 	cfg "go-api/src/config"
 	"go-api/src/endpoints"
+	_ "go-api/src/migrations"
+	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/pressly/goose/v3"
 )
 
 // Custom validator that wraps go-playground/validator
@@ -19,13 +24,22 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return cv.validator.Struct(i)
 }
 
-func main() {
-	config := cfg.Cfg()
-	e := echo.New()
+func init(){
+	logger:= slog.New(
+		slog.NewJSONHandler(
+			os.Stdout,
+			&slog.HandlerOptions{Level:cfg.GetLogLevel(cfg.Cfg().LogLevel) },
+		),
+	)
+	slog.SetDefault(logger)
 	
-	logLevel := cfg.GetLogLevel(config.LogLevel)
+	if err := goose.Up(cfg.Db().DB, "src/migrations"); err != nil {
+		log.Fatalf("Failed to apply migrations: %v", err)
+	}
+}
 
-	e.Logger.SetLevel(logLevel)
+func main() {
+	e := echo.New()
 	e.Use(middleware.RequestID())  // 📌 Add unique ID to all logs/errors early
 	e.Use(middleware.Logger())     // 📝 Log every request (with RequestID)
 	e.Use(middleware.Recover())    // 🛑 Catch panics before they crash the server

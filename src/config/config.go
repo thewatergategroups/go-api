@@ -2,11 +2,11 @@ package cfg
 
 import (
 	"encoding/json"
+	"log/slog"
 	"os"
 	"sync"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/labstack/gommon/log"
 )
 
 var (
@@ -14,14 +14,11 @@ var (
 	cfg config
 )
 
-
-
-
 type config struct {
 	LogLevel string `json:"log_level"`
 	Cache string `json:"cache"`
 	Redis redisConfig `json:"redis"`
-	Postgres pgConfig `json:"postgres"`
+	Db dbConfig `json:"db"`
 	Secrets secrets
 }
 
@@ -30,11 +27,15 @@ type redisConfig struct {
 	Db int `json:"db"`
 }
 
-type pgConfig struct {
+type dbConfig struct {
+	Driver string `json:"driver"`
 	Username string `json:"username"` 
 	Address string `json:"address"`  // host and port ( localhost:6379 )
 	DbName string `json:"db_name"`
 	Schema string `json:"schema"`
+	MaxOpenConns int `json:"max_open_conns"`
+	MaxIdleConns int `json:"max_idle_conns"`
+	MaxConnLifetimeMins int `json:"max_conn_lifetime_mins"`
 }
 
 type secrets struct {
@@ -42,15 +43,15 @@ type secrets struct {
 	PostgresPassword string `env:"PG_PASSWORD"`
 }
 
-func GetLogLevel(logLevel string) log.Lvl{
-	level := log.INFO
+func GetLogLevel(logLevel string) slog.Level{
+	level := slog.LevelInfo
 	switch logLevel {
 	case "debug":
-		level = log.DEBUG
+		level = slog.LevelDebug
 	case "warn":
-		level = log.WARN
+		level = slog.LevelWarn
 	case "error":
-		level = log.ERROR
+		level = slog.LevelError
 	}
 	return level
 }
